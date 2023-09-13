@@ -52,25 +52,6 @@ Run_Ancom2()
 }
 
 
-Run_Lefse()
-{
-    ## Would like to find a way around activiating this environment to run this as it does take some time to run...
-    source activate hackathon
-    echo "Running Lefse on rarified input table"
-    mkdir $Output_Path/Lefse_out
-    out_file_lefse=$Output_Path/Lefse_out/lefse_format_file.tsv
-     
-    Rscript $TOOL_DIR/Format_lefse.R $Rar_ASV_table_PATH $Groupings_Path $out_file_lefse
-    formated_out_file_lefse=$Output_Path/Lefse_out/lefse_formatted.lefse
-
-    
-    format_input.py $out_file_lefse $formated_out_file_lefse -c 2 -u 1 -o 1000000
-    lefse_results=$Output_Path/Lefse_out/Lefse_results.tsv
-    run_lefse.py $formated_out_file_lefse $lefse_results
-    echo "Done running Lefse"
-    
-    source deactivate hackathon
-}
 ##### Main
 
 Run_Corncob()
@@ -80,32 +61,6 @@ Run_Corncob()
     out_file_corncob=$Output_Path/Corncob_out/Corncob_results.tsv
     Rscript $TOOL_DIR/Run_Corncob.R $ASV_table_Path $Groupings_Path $out_file_corncob
 
-}
-
-Run_Wilcoxin_rare()
-{
-
-    mkdir $Output_Path/Wilcoxon_rare_out
-    out_file_wil_rare=$Output_Path/Wilcoxon_rare_out/Wil_rare_results.tsv
-    Rscript $TOOL_DIR/Run_Wilcox_rare.R $Rar_ASV_table_PATH $Groupings_Path $out_file_wil_rare
-
-}
-
-Run_Wilcoxin_CLR()
-{
-    mkdir $Output_Path/Wilcoxon_CLR_out
-    out_file_wil_CLR=$Output_Path/Wilcoxon_CLR_out/Wil_CLR_results.tsv
-    Rscript $TOOL_DIR/Run_Wilcox_CLR.R $ASV_table_Path $Groupings_Path $out_file_wil_CLR
-
-    
-}
-
-Run_Maaslin2_rare()
-{
-    echo "Running Maaslin2 with rarified table"
-    mkdir $Output_Path/Maaslin2_rare_out
-    out_file_maas_rare=$Output_Path/Maaslin2_rare_out
-    Rscript $TOOL_DIR/Run_Maaslin2.R $Rar_ASV_table_PATH $Groupings_Path $out_file_maas_rare
 }
 
 Run_Maaslin2()
@@ -125,49 +80,6 @@ Run_metagenomeSeq()
     Rscript $TOOL_DIR/Run_metagenomeSeq.R $ASV_table_Path $Groupings_Path $out_file_mgSeq
 }
 
-Run_edgeR()
-{
-    echo "Running edgeR"
-    mkdir $Output_Path/edgeR_out
-    out_file_edgeR=$Output_Path/edgeR_out/edgeR_res.tsv
-    Rscript $TOOL_DIR/Run_edgeR.R $ASV_table_Path $Groupings_Path $out_file_edgeR
-    
-}
-
-Run_t_test_rare()
-
-{
-    echo "Running T test"
-    mkdir $Output_Path/t_test_rare_out
-    out_file_t_rare=$Output_Path/t_test_rare_out/t_test_res.tsv
-    Rscript $TOOL_DIR/Run_t_test_rare.R $Rar_ASV_table_PATH $Groupings_Path $out_file_t_rare
-    
-}
-
-Run_limma_voom_TMM()
-
-{
-    
-	echo "Running Limma_voom_TMM"
-    mkdir $Output_Path/limma_voom_tmm_out
-    out_file_voom=$Output_Path/limma_voom_tmm_out/limma_voom_tmm_res.tsv
-    ref_file=$Output_Path/limma_voom_tmm_out/Ref_choosing.txt
-	Rscript $TOOL_DIR/Run_Limma_Voom_TMM.R $ASV_table_Path $Groupings_Path $out_file_voom $ref_file
-    
-}
-
-Run_limma_voom_TMMwsp()
-{
-
-    echo "Running Limma_voom_TMMwsp"
-    mkdir $Output_Path/Limma_voom_TMMwsp
-    outfile_voom=$Output_Path/Limma_voom_TMMwsp/limma_voom_tmmwsp_res.tsv
-	ref_file=$Output_Path/Limma_voom_TMMwsp/limma_voom_tmmwsp_res.tsv
-    Rscript $TOOL_DIR/Run_Limma_Voom_TMMwsp.R $ASV_table_Path $Groupings_Path $outfile_voom $ref_file
-
-}
-
-
 Groupings_Path=
 ASV_table_Path=
 Output_Path=
@@ -178,16 +90,8 @@ ALDEX_SKIP=F
 CORNCOB_SKIP=F
 ANCOM_SKIP=F
 DESEQ2_SKIP=F
-LEFSE_SKIP=F
-WILCOX_RARE_SKIP=F
-WILCOX_CLR_SKIP=F
-MAASLIN_RARE_SKIP=F
 MAASLIN_SKIP=F
 METAGENOME_SKIP=F
-EDGER_SKIP=F
-TTEST_RARE_SKIP=F
-LIMMA_TMM_SKIP=F
-LIMMA_TMMWSP_SKIP=F
 while [ "$1" != "" ]; do
     case $1 in
         -A | --ASV_table )           shift
@@ -220,39 +124,12 @@ while [ "$1" != "" ]; do
 	--ANCOM_SKIP) shift
 		ANCOM_SKIP=$1
 		;;
-	--DESEQ2_SKIP) shift
-		DESEQ2_SKIP=$1
-		;;
-	--LEFSE_SKIP) shift
-		LEFSE_SKIP=$1
-		;;
-	--WILCOX_RARE_SKIP) shift
-		WILCOX_RARE_SKIP=$1
-		;;
-	--WILCOX_CLR_SKIP) shift
-		WILCOX_CLR_SKIP=$1
-		;;
-	--MAASLIN_RARE_SKIP) shift
-		MAASLIN_RARE_SKIP=$1
-		;;
 	--MAASLIN_SKIP) shift
 		MAASLIN_SKIP=$1
 		;;
 	--METAGENOME_SKIP) shift
 		METAGENOME_SKIP=$1
 		;;
-	--EDGER_SKIP) shift
-		EDGER_SKIP=$1
-		;;
-	--TTEST_RARE_SKIP) shift
-		TTEST_RARE_SKIP=$1
-		;;
-	--LIMMA_TMM_SKIP) shift
-		LIMMA_TMM_SKIP=$1
-		;;
-	--LIMMA_TMMWSP_SKIP) shift
-		LIMMA_TMMWSP_SKIP=$1
-		;;	    
         * )                     echo $1
 				usage
                                 exit 1
@@ -320,38 +197,10 @@ if [ $DESEQ2_SKIP != T ]; then
 fi
 
 current=$SECONDS
-if [ $LEFSE_SKIP != T ]; then
-	Run_Lefse		       	
-	duration=$(( SECONDS - current))
-	echo "Lefse took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
 if [ $CORNCOB_SKIP != T ]; then
 	Run_Corncob
 	duration=$(( SECONDS - current))
 	echo "Corncob took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $WILCOX_RARE_SKIP != T ]; then
-	Run_Wilcoxin_rare
-	duration=$(( SECONDS - current))
-	echo "Wilcoxon rare took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $WILCOX_CLR_SKIP != T ]; then
-	Run_Wilcoxin_CLR
-	duration=$(( SECONDS - current))
-	echo "Wilcoxon CLR took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $MAASLIN_RARE_SKIP != T ]; then
-	Run_Maaslin2_rare
-	duration=$(( SECONDS - current))
-	echo "Maaslin2 rare took "$duration" seconds" >> $time_file
 fi
 
 current=$SECONDS
@@ -373,32 +222,4 @@ if [ $METAGENOME_SKIP != T ]; then
 	Run_metagenomeSeq
 	duration=$(( SECONDS - current))
 	echo "metagenomeSeq took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $EDGER_SKIP != T ]; then
-	Run_edgeR
-	duration=$(( SECONDS - current))
-	echo "edgeR took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $TTEST_RARE_SKIP != T ]; then
-	Run_t_test_rare
-	duration=$(( SECONDS - current))
-	echo "t test rare took "$duration" seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $LIMMA_TMM_SKIP != T ]; then
-	Run_limma_voom_TMM
-	duration=$(( SECONDS - current))
-	echo "Limma_voom_tmm took "$duration " seconds" >> $time_file
-fi
-
-current=$SECONDS
-if [ $LIMMA_TMMWSP_SKIP != T ]; then
-	Run_limma_voom_TMMwsp
-	duration=$(( SECONDS - current))
-	echo "Limma_voom_TMMwsp took "$duration " seconds" >> $time_file
 fi
